@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerenciador de Tarefas</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>Gerenciador de Tarefas</h1>
+      <p>Organize suas metas e veja rapidamente quais tarefas estão no caminho certo ou exigem foco.</p>
+    </div>
+    <div class="meta">
+      <a href="/docs" target="_blank">Documentação da API</a>
+    </div>
+  </header>
+
+  <section class="task-form">
+    <form id="taskForm">
+      <div class="field-group">
+          <label for="title">Título</label>
+          <input type="text" id="title" name="title" maxlength="100" placeholder="Título da tarefa" required />
+        </div>
+        <div class="field-group">
+          <label for="description">Descrição</label>
+          <textarea id="description" name="description" maxlength="500" placeholder="Detalhes opcionais"></textarea>
+        </div>
+        <div class="field-group">
+          <label for="due_date">Data de conclusão</label>
+          <input type="date" id="due_date" name="due_date" />
+        </div>
+        <button type="submit">Adicionar tarefa</button>
+      </form>
+    </section>
+  <section class="task-dashboard">
+    <div class="dashboard-grid">
+      <article class="metric metric--ok">
+        <div class="metric-head">
+          <span class="metric-label">Em Dia</span>
+          <strong id="onTrackCount" class="metric-value">0</strong>
+        </div>
+        <p>Tarefas com prazo tranquilo ou sem prazo.</p>
+      </article>
+      <article class="metric metric--attention">
+        <div class="metric-head">
+          <span class="metric-label">Atenção</span>
+          <strong id="attentionCount" class="metric-value">0</strong>
+        </div>
+        <p>Prazo se aproxima e merece foco.</p>
+      </article>
+      <article class="metric metric--urgent">
+        <div class="metric-head">
+          <span class="metric-label">Urgente</span>
+          <strong id="urgentCount" class="metric-value">0</strong>
+        </div>
+        <p>Prazo curto ou vencido — ação imediata.</p>
+      </article>
+      <article class="metric metric--done">
+        <div class="metric-head">
+          <span class="metric-label">Concluídas</span>
+          <strong id="completedCount" class="metric-value">0</strong>
+        </div>
+        <p>Tarefas concluídas que avançam sua meta.</p>
+      </article>
+      <article class="metric metric--goal">
+        <div class="metric-head">
+          <span class="metric-label">Progresso da Meta</span>
+          <strong id="goalProgressValue" class="metric-value">0%</strong>
+        </div>
+        <div class="progress-bar">
+          <div id="goalProgressBar" class="progress-fill"></div>
+        </div>
+        <p id="goalProgressText">Adicione tarefas para iniciar sua meta.</p>
+      </article>
+    </div>
+    <div class="legend">
+      <span class="legend-chip legend-chip--ok">OK</span>
+      <span class="legend-chip legend-chip--attention">Atenção</span>
+      <span class="legend-chip legend-chip--urgent">Urgente</span>
+      <span class="legend-chip legend-chip--neutral">Sem prazo / Concluído</span>
+    </div>
+  </section>
+
+  <section class="task-board">
+    <div class="column" data-status="todo">
+      <h2>A Fazer <span class="column-count" id="todoCount">0</span></h2>
+      <p class="subtitle">Novas tarefas aguardam priorização.</p>
+      <div id="todoList" class="task-list" data-status="todo"></div>
+    </div>
+    <div class="column" data-status="in_progress">
+      <h2>Em andamento <span class="column-count" id="inProgressCount">0</span></h2>
+      <p class="subtitle">Tarefas em andamento para alcançar sua meta.</p>
+      <div id="inProgressList" class="task-list" data-status="in_progress"></div>
+    </div>
+    <div class="column" data-status="done">
+      <h2>Concluídas <span class="column-count" id="doneCount">0</span></h2>
+      <p class="subtitle">Resultados entregues e metas alcançadas.</p>
+      <div id="doneList" class="task-list" data-status="done"></div>
+    </div>
+  </section>
+
+  <template id="taskCardTemplate">
+    <article class="task-card" draggable="true">
+      <div class="task-main">
+        <strong class="task-title"></strong>
+        <p class="task-desc"></p>
+        <p class="task-meta"></p>
+        <p class="task-due"></p>
+        <p class="task-urgency"></p>
+      </div>
+      <div class="task-footer">
+        <span class="task-date"></span>
+        <div class="actions">
+          <button class="toggle-status"></button>
+          <button class="delete-task">Excluir</button>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
