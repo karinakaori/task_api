@@ -9,6 +9,9 @@ const taskTemplate = document.getElementById("taskCardTemplate");
 let draggedId = null;
 let draggedStatus = null;
 
+/**
+ * Exibe uma mensagem temporária no topo da tela.
+ */
 function showToast(message) {
   toast.textContent = message;
   toast.classList.remove("hidden");
@@ -18,12 +21,18 @@ function showToast(message) {
   }, 2200);
 }
 
+/**
+ * Busca todas as tarefas do backend e renderiza na tela.
+ */
 async function fetchTasks() {
   const response = await fetch(apiBase);
   const tasks = await response.json();
   renderTasks(tasks);
 }
 
+/**
+ * Formata uma data para o padrão local do navegador.
+ */
 function formatDate(dateString) {
   return new Date(dateString).toLocaleString([], {
     year: "numeric",
@@ -32,6 +41,9 @@ function formatDate(dateString) {
   });
 }
 
+/**
+ * Retorna o tempo desde a criação da tarefa em horas e minutos.
+ */
 function formatDuration(dateString) {
   const created = new Date(dateString);
   const diffMs = Math.max(Date.now() - created.getTime(), 0);
@@ -44,6 +56,9 @@ function formatDuration(dateString) {
   return `${minutes}m`;
 }
 
+/**
+ * Define a classe de cor do cartão de tarefa com base no prazo.
+ */
 function getDueDateClass(task) {
   if (!task.due_date || task.status === "done") {
     return "task-card--neutral";
@@ -54,10 +69,7 @@ function getDueDateClass(task) {
   const remainingMs = dueDate.getTime() - Date.now();
   const remainingHours = remainingMs / 3600000;
 
-  if (remainingMs <= 0) {
-    return "task-card--red";
-  }
-  if (remainingHours <= 4) {
+  if (remainingMs <= 0 || remainingHours <= 4) {
     return "task-card--red";
   }
   if (remainingHours <= 24) {
@@ -66,6 +78,9 @@ function getDueDateClass(task) {
   return "task-card--green";
 }
 
+/**
+ * Retorna o texto e a variante de estilo da urgência da tarefa.
+ */
 function getUrgencyText(task) {
   if (task.status === "done") {
     return { text: "Concluído", variant: "ok" };
@@ -79,10 +94,7 @@ function getUrgencyText(task) {
   const remainingMs = dueDate.getTime() - Date.now();
   const remainingHours = remainingMs / 3600000;
 
-  if (remainingMs <= 0) {
-    return { text: "Urgente", variant: "urgent" };
-  }
-  if (remainingHours <= 4) {
+  if (remainingMs <= 0 || remainingHours <= 4) {
     return { text: "Urgente", variant: "urgent" };
   }
   if (remainingHours <= 24) {
@@ -91,6 +103,9 @@ function getUrgencyText(task) {
   return { text: "OK", variant: "ok" };
 }
 
+/**
+ * Gera o texto que aparece no rodapé do cartão de tarefa.
+ */
 function getTaskMeta(task) {
   const createdAt = formatDate(task.created_at);
   const startText = `Iniciada em ${createdAt}`;
@@ -112,6 +127,9 @@ function getTaskMeta(task) {
   return startText;
 }
 
+/**
+ * Texto do botão principal de ação no cartão, dependendo do status atual.
+ */
 function getToggleButtonText(status) {
   switch (status) {
     case "todo":
@@ -121,10 +139,13 @@ function getToggleButtonText(status) {
     case "done":
       return "Reabrir";
     default:
-      return "Move";
+      return "Mover";
   }
 }
 
+/**
+ * Calcula qual será o próximo status ao clicar no botão de ação.
+ */
 function getNextStatus(status) {
   switch (status) {
     case "todo":
@@ -138,21 +159,27 @@ function getNextStatus(status) {
   }
 }
 
+/**
+ * Cria o elemento HTML do cartão de tarefa a partir do template.
+ */
 function createTaskCard(task) {
   const element = taskTemplate.content.firstElementChild.cloneNode(true);
   element.dataset.id = task.id;
   element.dataset.status = task.status;
   element.classList.add(getDueDateClass(task));
+
   element.querySelector(".task-title").textContent = task.title;
   element.querySelector(".task-desc").textContent = task.description || "Nenhuma descrição fornecida.";
   element.querySelector(".task-meta").textContent = getTaskMeta(task);
   element.querySelector(".task-due").textContent = task.due_date
     ? `Prazo: ${formatDate(task.due_date)}`
     : "Sem prazo definido.";
+
   const urgency = getUrgencyText(task);
   const urgencyElement = element.querySelector(".task-urgency");
   urgencyElement.textContent = urgency.text;
   urgencyElement.className = `task-urgency task-urgency--${urgency.variant}`;
+
   element.querySelector(".task-date").textContent = formatDate(task.created_at);
   const toggleButton = element.querySelector(".toggle-status");
   const deleteButton = element.querySelector(".delete-task");
@@ -177,6 +204,9 @@ function createTaskCard(task) {
   return element;
 }
 
+/**
+ * Atualiza os indicadores do dashboard com as quantidades de tarefas em cada estado.
+ */
 function updateDashboard(tasks) {
   const onTrack = tasks.filter((task) => getUrgencyText(task).variant === "ok" && task.status !== "done").length;
   const attention = tasks.filter((task) => getUrgencyText(task).variant === "attention").length;
@@ -189,6 +219,9 @@ function updateDashboard(tasks) {
   document.getElementById("completedCount").textContent = completed;
 }
 
+/**
+ * Atualiza a barra de progresso da meta de conclusão.
+ */
 function updateGoalProgress(tasks) {
   const completed = tasks.filter((task) => task.status === "done").length;
   const total = tasks.length;
@@ -202,12 +235,18 @@ function updateGoalProgress(tasks) {
       : `${completed} de ${total} tarefas concluídas`;
 }
 
+/**
+ * Atualiza os contadores de cada coluna do quadro.
+ */
 function updateColumnCounts(tasks) {
   document.getElementById("todoCount").textContent = tasks.filter((task) => task.status === "todo").length;
   document.getElementById("inProgressCount").textContent = tasks.filter((task) => task.status === "in_progress").length;
   document.getElementById("doneCount").textContent = tasks.filter((task) => task.status === "done").length;
 }
 
+/**
+ * Renderiza todas as tarefas no quadro e atualiza os indicadores do dashboard.
+ */
 function renderTasks(tasks) {
   todoList.innerHTML = "";
   inProgressList.innerHTML = "";
@@ -231,6 +270,9 @@ function renderTasks(tasks) {
   updateColumnCounts(tasks);
 }
 
+/**
+ * Cria uma nova tarefa no backend.
+ */
 async function postTask(title, description, dueDate = null) {
   const response = await fetch(apiBase, {
     method: "POST",
@@ -244,6 +286,9 @@ async function postTask(title, description, dueDate = null) {
   return response.json();
 }
 
+/**
+ * Atualiza o status da tarefa escolhido pelo usuário.
+ */
 async function toggleTaskStatus(taskId, status) {
   const response = await fetch(`${apiBase}/${taskId}`, {
     method: "PUT",
@@ -258,6 +303,9 @@ async function toggleTaskStatus(taskId, status) {
   fetchTasks();
 }
 
+/**
+ * Remove uma tarefa do backend.
+ */
 async function deleteTask(taskId) {
   const response = await fetch(`${apiBase}/${taskId}`, {
     method: "DELETE",
@@ -270,6 +318,9 @@ async function deleteTask(taskId) {
   }
 }
 
+/**
+ * Manipula o envio do formulário de criação de tarefa.
+ */
 async function handleFormSubmit(event) {
   event.preventDefault();
   const form = event.currentTarget;
@@ -292,6 +343,9 @@ async function handleFormSubmit(event) {
   }
 }
 
+/**
+ * Habilita o comportamento de arrastar e soltar dentro de uma coluna.
+ */
 function enableDrop(zone) {
   zone.addEventListener("dragover", (event) => {
     event.preventDefault();
@@ -313,6 +367,9 @@ function enableDrop(zone) {
   });
 }
 
+/**
+ * Inicializa o comportamento da interface e carrega as tarefas.
+ */
 function init() {
   taskForm.addEventListener("submit", handleFormSubmit);
   enableDrop(todoList);

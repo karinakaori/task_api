@@ -4,6 +4,29 @@
 
 Este projeto é um gerenciador de tarefas com backend em FastAPI e frontend estático que ajuda o usuário a acompanhar metas, prazos e progresso do trabalho. A aplicação suporta criação, atualização parcial, exclusão e listagem de tarefas, além de apresentar um painel visual com urgência de prazo e progresso de meta.
 
+## Storytelling: Como a IA Acelerou Este Projeto
+
+Este projeto foi desenvolvido com a ajuda de ferramentas de IA como Copilot e Cursor, que permitiram:
+
+✨ Geração rápida da estrutura base da API REST
+✨ Automação de testes unitários com pytest
+✨ Documentação automática com OpenAPI/Swagger
+✨ Sugestões de boas práticas e refatoração
+
+## Limitações identificadas e melhorias implementadas
+
+⚠️ A IA gerou código sem considerar rate limiting
+⚠️ Faltou validação de entrada em alguns endpoints
+⚠️ Logs não foram estruturados adequadamente
+⚠️ Segurança: credenciais devem ser mantidas fora do repositório e não commitadas
+
+As melhorias mais recentes incluem:
+
+- Limitação de taxa simples por IP para proteger a API de chamadas abusivas.
+- Logs estruturados para capturar tempo de processamento e status de resposta.
+- Tratamento global de erros para validações e exceções internas.
+- `.gitignore` atualizado para excluir ambiente virtual e banco local.
+
 ## Tecnologias
 
 - Python 3.10+
@@ -67,6 +90,7 @@ uvicorn app.main:app --reload
   - vermelho: tarefa urgente ou vencida
 - barra de progresso de meta baseada em tarefas concluídas
 - contadores dinâmicos com status geral das tarefas
+- limitação de taxa simples por IP para reduzir uso abusivo da API
 
 ## Arquitetura
 
@@ -104,11 +128,19 @@ sequenceDiagram
 
 ## Testes
 
-Para executar o conjunto de testes:
+Para executar o conjunto de testes com pytest:
 
 ```bash
 pytest
 ```
+
+Ou use o Makefile:
+
+```bash
+make test
+```
+
+Este projeto inclui testes de unidade e um teste de integração para verificar o comportamento do rate limiter, garantindo que a API retorne `429 Too Many Requests` quando o limite de chamadas for excedido.
 
 ## Endpoints disponíveis
 
@@ -124,6 +156,19 @@ pytest
 2. Preencha título, descrição e data de conclusão
 3. Arraste a tarefa para `Em andamento` ou `Concluídas`
 4. Use o painel no topo para identificar rapidamente o que está em dia, em atenção ou urgente
+
+## Segurança
+
+- Garanta que credenciais e segredos não fiquem versionados.
+- Adicione `.env` e arquivos sensíveis ao `.gitignore`.
+- Use variáveis de ambiente para qualquer configuração de produção.
+
+## Boas práticas aplicadas
+
+- Limitação de taxa simples por IP para reduzir uso abusivo da API.
+- Logs estruturados com tempo de processamento e status de resposta.
+- Tratamento de erros globais para validações e exceções internas.
+- Arquivo `.gitignore` criado para evitar envio de ambiente virtual e dados locais.
 
 ## Observações
 

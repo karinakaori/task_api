@@ -2,7 +2,7 @@ import uuid
 
 from fastapi.testclient import TestClient
 
-from app.main import app
+from app.main import app, reset_rate_limiter
 from app.database import Base, engine
 
 client = TestClient(app)
@@ -74,3 +74,16 @@ def test_get_task_not_found_returns_404() -> None:
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Task not found"
+
+
+def test_rate_limit_blocks_after_too_many_requests() -> None:
+    reset_rate_limiter()
+
+    for _ in range(30):
+        response = client.get("/tasks")
+        assert response.status_code == 200
+
+    response = client.get("/tasks")
+    assert response.status_code == 429
+    assert response.json()["detail"] == "Too many requests. Please wait before retrying."
+    assert "Retry-After" in response.headers
