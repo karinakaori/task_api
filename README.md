@@ -4,26 +4,20 @@
 
 Este projeto é um gerenciador de tarefas com backend em FastAPI e frontend estático que ajuda o usuário a acompanhar metas, prazos e progresso do trabalho. A aplicação suporta criação, atualização parcial, exclusão e listagem de tarefas, além de apresentar um painel visual com urgência de prazo e progresso de meta.
 
-## Storytelling: Como a IA Acelerou Este Projeto
+## Como a IA Acelerou Este Projeto
 
 Este projeto foi desenvolvido com a ajuda de ferramentas de IA como Copilot e Cursor, que permitiram:
 
 ✨ Geração rápida da estrutura base da API REST
-
 ✨ Automação de testes unitários com pytest
-
 ✨ Documentação automática com OpenAPI/Swagger
-
 ✨ Sugestões de boas práticas e refatoração
 
 ## Limitações identificadas e melhorias implementadas
 
 ⚠️ A IA gerou código sem considerar rate limiting
-
 ⚠️ Faltou validação de entrada em alguns endpoints
-
 ⚠️ Logs não foram estruturados adequadamente
-
 ⚠️ Segurança: credenciais devem ser mantidas fora do repositório e não commitadas
 
 As melhorias mais recentes incluem:
@@ -42,8 +36,6 @@ As melhorias mais recentes incluem:
 - Pytest
 - HTTPX
 - Uvicorn
-- Alembic
-- Docker
 
 ## Como executar
 
@@ -73,39 +65,19 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Opcionalmente, copie as variáveis de ambiente:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-5. Execute as migrações do banco:
-
-```bash
-alembic upgrade head
-```
-
-6. Execute a aplicação:
+4. Execute a aplicação:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-7. Acesse a interface web:
+5. Acesse a interface web:
 
-- `http://localhost:8000/`
+- `http://127.0.0.1:8000`
 
-8. Acesse a documentação automática (Swagger):
+6. Acesse a documentação automática (Swagger):
 
-- `http://localhost:8000/docs`
-
-## Docker
-
-Também é possível executar com Docker Compose:
-
-```bash
-docker compose up --build
-```
+- `http://127.0.0.1:8000/docs`
 
 ## Funcionalidades
 
@@ -173,27 +145,14 @@ Este projeto inclui testes de unidade e um teste de integração para verificar 
 ## Endpoints disponíveis
 
 - `POST /tasks` - cria uma nova tarefa
-- `GET /tasks` - lista tarefas com filtros opcionais `skip`, `limit` e `status`, retornando `items`, `total`, `skip` e `limit`
+- `GET /tasks` - lista tarefas com filtros opcionais `skip`, `limit` e `status`
 - `GET /tasks/{id}` - obtém uma tarefa pelo UUID
 - `PUT /tasks/{id}` - atualiza parcialmente uma tarefa
 - `DELETE /tasks/{id}` - remove uma tarefa
 
-As rotas aceitam o cabeçalho opcional `X-User-Id`, preparando o projeto para autenticação futura e permitindo isolar tarefas por usuário quando o cabeçalho é enviado.
-
-Exemplo de resposta de lista:
-
-```json
-{
-  "items": [],
-  "total": 0,
-  "skip": 0,
-  "limit": 50
-}
-```
-
 ## Como usar
 
-1. Abra a interface web em `http://localhost:8000/`
+1. Abra a interface web em `http://127.0.0.1:8000`
 2. Preencha título, descrição e data de conclusão
 3. Arraste a tarefa para `Em andamento` ou `Concluídas`
 4. Use o painel no topo para identificar rapidamente o que está em dia, em atenção ou urgente
