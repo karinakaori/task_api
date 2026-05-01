@@ -14,10 +14,10 @@
 4. O status inicial de uma tarefa criada deve ser `todo`.
 5. As tarefas podem ser movidas entre `A Fazer`, `Em andamento` e `Concluídas`.
 6. Quando uma tarefa estiver `done`, ela não deve mais receber cor de urgência ativa.
-7. A urgência é calculada com base no prazo:
-   - Verde: prazo confortável
-   - Amarelo: prazo se aproxima (até 24 horas)
-   - Vermelho: prazo curto ou vencido (até 4 horas ou vencido)
+7. A urgência é calculada com base na data do prazo:
+   - Verde: prazo confortável, a partir de depois de amanhã
+   - Amarelo: prazo se aproxima, quando vence amanhã
+   - Vermelho: tarefa vence hoje ou já está vencida
 8. O painel de progresso deve mostrar a porcentagem de tarefas concluídas em relação ao total.
 9. A exclusão deve remover a tarefa permanentemente do banco de dados.
 10. O frontend deve ser intuitivo e permitir ver, em um relance, que tarefas precisam de atenção.

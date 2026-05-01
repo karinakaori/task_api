@@ -26,7 +26,13 @@ function showToast(message) {
  */
 async function fetchTasks() {
   const response = await fetch(apiBase);
-  const tasks = await response.json();
+  if (!response.ok) {
+    showToast("Não foi possível carregar as tarefas.");
+    return;
+  }
+
+  const result = await response.json();
+  const tasks = Array.isArray(result) ? result : result.items || [];
   renderTasks(tasks);
 }
 
@@ -39,6 +45,36 @@ function formatDate(dateString) {
     month: "numeric",
     day: "numeric",
   });
+}
+
+/**
+ * Converte uma data YYYY-MM-DD para data local, evitando deslocamento por fuso horário.
+ */
+function parseLocalDate(dateString) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+/**
+ * Formata um prazo YYYY-MM-DD sem aplicar conversão UTC.
+ */
+function formatDueDate(dateString) {
+  return parseLocalDate(dateString).toLocaleDateString([], {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+}
+
+function getTodayLocalDate() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+function getDaysUntilDue(dueDateString) {
+  const dueDate = parseLocalDate(dueDateString);
+  const today = getTodayLocalDate();
+  return Math.floor((dueDate.getTime() - today.getTime()) / 86400000);
 }
 
 /**
@@ -64,15 +100,12 @@ function getDueDateClass(task) {
     return "task-card--neutral";
   }
 
-  const dueDate = new Date(task.due_date);
-  dueDate.setHours(23, 59, 59, 999);
-  const remainingMs = dueDate.getTime() - Date.now();
-  const remainingHours = remainingMs / 3600000;
+  const daysUntilDue = getDaysUntilDue(task.due_date);
 
-  if (remainingMs <= 0 || remainingHours <= 4) {
+  if (daysUntilDue <= 0) {
     return "task-card--red";
   }
-  if (remainingHours <= 24) {
+  if (daysUntilDue === 1) {
     return "task-card--yellow";
   }
   return "task-card--green";
@@ -89,15 +122,12 @@ function getUrgencyText(task) {
     return { text: "Sem prazo definido", variant: "ok" };
   }
 
-  const dueDate = new Date(task.due_date);
-  dueDate.setHours(23, 59, 59, 999);
-  const remainingMs = dueDate.getTime() - Date.now();
-  const remainingHours = remainingMs / 3600000;
+  const daysUntilDue = getDaysUntilDue(task.due_date);
 
-  if (remainingMs <= 0 || remainingHours <= 4) {
+  if (daysUntilDue <= 0) {
     return { text: "Urgente", variant: "urgent" };
   }
-  if (remainingHours <= 24) {
+  if (daysUntilDue === 1) {
     return { text: "Atenção", variant: "attention" };
   }
   return { text: "OK", variant: "ok" };
@@ -112,7 +142,7 @@ function getTaskMeta(task) {
   const duration = formatDuration(task.created_at);
 
   if (task.due_date) {
-    const dueDate = new Date(task.due_date);
+    const dueDate = parseLocalDate(task.due_date);
     const dueText = `${dueDate.getDate()}/${dueDate.getMonth() + 1}`;
     if (task.status === "done") {
       return `${startText} • prazo ${dueText} • concluída`;
@@ -172,7 +202,7 @@ function createTaskCard(task) {
   element.querySelector(".task-desc").textContent = task.description || "Nenhuma descrição fornecida.";
   element.querySelector(".task-meta").textContent = getTaskMeta(task);
   element.querySelector(".task-due").textContent = task.due_date
-    ? `Prazo: ${formatDate(task.due_date)}`
+    ? `Prazo: ${formatDueDate(task.due_date)}`
     : "Sem prazo definido.";
 
   const urgency = getUrgencyText(task);
@@ -281,7 +311,8 @@ async function postTask(title, description, dueDate = null) {
   });
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail?.[0]?.msg || error.detail || "Não foi possível criar a tarefa.");
+    const validationMessage = error.error?.details?.[0]?.msg;
+    throw new Error(validationMessage || error.error?.message || "Não foi possível criar a tarefa.");
   }
   return response.json();
 }

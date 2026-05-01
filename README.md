@@ -42,6 +42,8 @@ As melhorias mais recentes incluem:
 - Pytest
 - HTTPX
 - Uvicorn
+- Alembic
+- Docker
 
 ## Como executar
 
@@ -71,19 +73,39 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Execute a aplicação:
+4. Opcionalmente, copie as variáveis de ambiente:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+5. Execute as migrações do banco:
+
+```bash
+alembic upgrade head
+```
+
+6. Execute a aplicação:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-5. Acesse a interface web:
+7. Acesse a interface web:
 
 - `http://localhost:8000/`
 
-6. Acesse a documentação automática (Swagger):
+8. Acesse a documentação automática (Swagger):
 
 - `http://localhost:8000/docs`
+
+## Docker
+
+Também é possível executar com Docker Compose:
+
+```bash
+docker compose up --build
+```
 
 ## Funcionalidades
 
@@ -151,10 +173,23 @@ Este projeto inclui testes de unidade e um teste de integração para verificar 
 ## Endpoints disponíveis
 
 - `POST /tasks` - cria uma nova tarefa
-- `GET /tasks` - lista tarefas com filtros opcionais `skip`, `limit` e `status`
+- `GET /tasks` - lista tarefas com filtros opcionais `skip`, `limit` e `status`, retornando `items`, `total`, `skip` e `limit`
 - `GET /tasks/{id}` - obtém uma tarefa pelo UUID
 - `PUT /tasks/{id}` - atualiza parcialmente uma tarefa
 - `DELETE /tasks/{id}` - remove uma tarefa
+
+As rotas aceitam o cabeçalho opcional `X-User-Id`, preparando o projeto para autenticação futura e permitindo isolar tarefas por usuário quando o cabeçalho é enviado.
+
+Exemplo de resposta de lista:
+
+```json
+{
+  "items": [],
+  "total": 0,
+  "skip": 0,
+  "limit": 50
+}
+```
 
 ## Como usar
 
