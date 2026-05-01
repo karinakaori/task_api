@@ -1,58 +1,62 @@
 # API de Gerenciamento de Tarefas
 
-## Visão Geral
+<!-- README_RENDER_VERSION: 2026-05-01-notranslate-v2 -->
 
-Este projeto é um gerenciador de tarefas com backend em FastAPI e frontend estático. Ele permite criar, listar, atualizar, mover e excluir tarefas em um quadro visual com colunas de status, prazo, urgência e progresso de conclusão.
+> Este README ja esta em portugues. Se ele for aberto no navegador, desative a traducao automatica da pagina para preservar nomes tecnicos como `Alembic`, `Uvicorn` e `Pydantic`.
 
-A aplicação foi organizada com uma estrutura em camadas para separar responsabilidades de API, regras de negócio, persistência, configuração e interface web.
+## Visao Geral
+
+Este projeto e uma aplicacao de tarefas com backend em `FastAPI` e frontend estatico. A interface permite criar, listar, mover e excluir tarefas em um quadro com colunas de status, prazo final, urgencia e progresso.
+
+A arquitetura foi organizada em camadas para separar rotas HTTP, regras de negocio, acesso ao banco, configuracoes e frontend.
 
 ## Funcionalidades
 
-- Quadro de tarefas com colunas `A Fazer`, `Em andamento` e `Concluídas`.
-- Criação de tarefas com título, descrição opcional e data de conclusão.
-- Atualização de status por botão ou arrastar e soltar.
-- Exclusão de tarefas.
-- Indicadores de urgência por prazo:
-  - verde: prazo confortável, a partir de depois de amanhã;
-  - amarelo: tarefa vence amanhã;
-  - vermelho: tarefa vence hoje ou está vencida;
-  - neutro: tarefa concluída ou sem prazo.
-- Barra de progresso baseada na quantidade de tarefas concluídas.
-- Paginação e filtro por status na API.
-- Rate limiting simples por IP.
+- Quadro com as colunas `A Fazer`, `Em andamento` e `Concluidas`.
+- Cadastro de tarefa com titulo, descricao opcional e prazo final.
+- Mudanca de status por botao ou por arrastar e soltar.
+- Exclusao de tarefas.
+- Indicador visual de urgencia:
+  - verde: prazo depois de amanha ou mais distante;
+  - amarelo: prazo amanha;
+  - vermelho: prazo hoje ou vencido;
+  - neutro: tarefa concluida ou sem prazo.
+- Barra de progresso com base nas tarefas concluidas.
+- Filtro por status e paginacao na API.
+- Rate limit simples por IP.
 - Logs estruturados em JSON.
-- Erros padronizados.
-- Migrações de banco com Alembic.
-- Execução local ou via Docker.
+- Respostas de erro padronizadas.
+- Migracoes de banco com `Alembic`.
+- Execucao local ou com `Docker`.
 
-## Tecnologias
+## Ferramentas Usadas
 
-- Python 3.10+
-- FastAPI
-- Uvicorn
-- SQLAlchemy
-- SQLite
-- Alembic
-- Pydantic
-- Pydantic Settings
-- Pytest
-- HTTPX
-- Docker
+- `Python 3.10+`
+- `FastAPI`
+- `Uvicorn`
+- `SQLAlchemy`
+- `SQLite`
+- `Alembic`
+- `Pydantic`
+- `pydantic-settings`
+- `pytest`
+- `HTTPX`
+- `Docker`
 
-## Estrutura do Projeto
+## Estrutura
 
 ```txt
 app/
-  api/routes/        Rotas HTTP da API
-  core/              Configuração, logs, erros, segurança e rate limit
-  db/                Conexão com banco e modelos SQLAlchemy
-  repositories/      Operações de persistência
-  schemas/           Schemas Pydantic de entrada e saída
-  services/          Regras de negócio
-  static/            Frontend estático
-alembic/             Migrações de banco
+  api/routes/        Rotas HTTP
+  core/              Configuracao, logs, erros, seguranca e rate limit
+  db/                Conexao e modelos do banco
+  repositories/      Consultas e alteracoes no banco
+  schemas/           Contratos Pydantic
+  services/          Regras de negocio
+  static/            Frontend estatico
+alembic/             Migracoes do banco
 tests/               Testes automatizados
-doc/                 Documentação complementar
+doc/                 Documentacao complementar
 ```
 
 ## Como Executar Localmente
@@ -63,7 +67,7 @@ doc/                 Documentação complementar
 python -m venv .venv
 ```
 
-2. Ative o ambiente:
+2. Ative o ambiente.
 
 Windows:
 
@@ -77,43 +81,43 @@ macOS / Linux:
 source .venv/bin/activate
 ```
 
-3. Instale as dependências:
+3. Instale as dependencias:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Opcionalmente, crie um arquivo `.env` a partir do exemplo:
+4. Opcionalmente, crie o arquivo `.env`:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-5. Aplique as migrações do banco:
+5. Aplique as migracoes:
 
 ```bash
 alembic upgrade head
 ```
 
-6. Execute a aplicação:
+6. Inicie a aplicacao:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-7. Acesse a interface web:
+7. Abra no navegador:
 
 ```txt
 http://localhost:8000/
 ```
 
-8. Acesse a documentação automática da API:
+8. Documentacao interativa da API:
 
 ```txt
 http://localhost:8000/docs
 ```
 
-## Executando com Makefile
+## Comandos com Makefile
 
 ```bash
 make install
@@ -121,7 +125,7 @@ make migrate
 make run
 ```
 
-Outros comandos disponíveis:
+Outros comandos:
 
 ```bash
 make test
@@ -129,7 +133,7 @@ make docker-run
 make docker-build
 ```
 
-## Executando com Docker
+## Executar com Docker
 
 ```bash
 docker compose up --build
@@ -141,11 +145,11 @@ Depois acesse:
 http://localhost:8000/
 ```
 
-O `docker-compose.yml` aplica as migrações antes de iniciar a API e persiste o banco SQLite em um volume Docker.
+O `docker-compose.yml` aplica as migracoes antes de subir a API e guarda o banco `SQLite` em um volume Docker.
 
-## Configuração
+## Configuracao
 
-As principais variáveis de ambiente estão em `.env.example`:
+As variaveis principais ficam em `.env.example`:
 
 ```txt
 APP_NAME=Task API
@@ -157,21 +161,21 @@ RATE_LIMIT_MAX_REQUESTS=30
 RATE_LIMIT_WINDOW_SECONDS=60
 ```
 
-## Endpoints
+## Rotas da API
 
-- `POST /tasks` - cria uma nova tarefa.
-- `GET /tasks` - lista tarefas com paginação e filtro opcional por status.
-- `GET /tasks/{id}` - busca uma tarefa pelo UUID.
-- `PUT /tasks/{id}` - atualiza parcialmente uma tarefa.
-- `DELETE /tasks/{id}` - remove uma tarefa.
+- `POST /tasks`: cria uma tarefa.
+- `GET /tasks`: lista tarefas com paginacao e filtro por status.
+- `GET /tasks/{id}`: busca uma tarefa pelo UUID.
+- `PUT /tasks/{id}`: atualiza parcialmente uma tarefa.
+- `DELETE /tasks/{id}`: remove uma tarefa.
 
-Parâmetros de `GET /tasks`:
+Parametros de `GET /tasks`:
 
-- `skip`: quantidade de registros ignorados, padrão `0`.
-- `limit`: quantidade máxima de registros, padrão `50`, máximo `100`.
-- `status`: filtro opcional com `todo`, `in_progress` ou `done`.
+- `skip`: quantidade de registros ignorados. Padrao: `0`.
+- `limit`: quantidade maxima de registros. Padrao: `50`. Maximo: `100`.
+- `status`: filtro opcional. Valores: `todo`, `in_progress` ou `done`.
 
-Exemplo de resposta de `GET /tasks`:
+Resposta de exemplo:
 
 ```json
 {
@@ -192,11 +196,11 @@ Exemplo de resposta de `GET /tasks`:
 }
 ```
 
-As rotas aceitam o cabeçalho opcional `X-User-Id`. Ele prepara o projeto para autenticação futura e permite isolar tarefas por usuário quando informado.
+As rotas aceitam o cabecalho opcional `X-User-Id`. Ele prepara o projeto para autenticacao futura e permite separar tarefas por usuario quando informado.
 
-## Formato de Erros
+## Resposta de Erro
 
-As respostas de erro seguem um formato padronizado:
+Formato padrao:
 
 ```json
 {
@@ -210,49 +214,31 @@ As respostas de erro seguem um formato padronizado:
 
 ## Arquitetura
 
-O fluxo principal segue a separação:
+Fluxo principal:
 
 ```txt
 Cliente -> FastAPI Router -> TaskService -> TaskRepository -> SQLite
 ```
 
-```mermaid
-flowchart LR
-    Cliente --> Router[FastAPI Router]
-    Router --> Schemas[Validação Pydantic]
-    Schemas --> Service[TaskService]
-    Service --> Repository[TaskRepository]
-    Repository --> DB[SQLite]
-    DB --> Repository
-    Repository --> Service
-    Service --> Router
-    Router --> Cliente
-```
+| Camada | Responsabilidade |
+| --- | --- |
+| Cliente | Interface web ou cliente HTTP. |
+| Router | Recebe requisicoes e define respostas HTTP. |
+| Schemas | Valida entradas e saidas com `Pydantic`. |
+| Service | Centraliza regras de negocio. |
+| Repository | Acessa e altera dados no banco. |
+| SQLite | Armazena as tarefas. |
 
-## Fluxo de Criação de Tarefa
+## Fluxo de Criacao
 
-```mermaid
-sequenceDiagram
-    participant Cliente
-    participant Router as FastAPI Router
-    participant Service as TaskService
-    participant Repo as TaskRepository
-    participant DB as SQLite
-
-    Cliente->>Router: POST /tasks
-    Router->>Router: Valida TaskCreate
-    Router->>Service: create(task_create)
-    Service->>Repo: create(task_create)
-    Repo->>DB: INSERT task
-    DB-->>Repo: tarefa persistida
-    Repo-->>Service: TaskDB
-    Service-->>Router: TaskDB
-    Router-->>Cliente: 201 Created
-```
+1. Cliente envia `POST /tasks`.
+2. Router valida o corpo com `TaskCreate`.
+3. Router chama `TaskService.create`.
+4. Service chama `TaskRepository.create`.
+5. Repository grava a tarefa no banco.
+6. API retorna `201 Created` com `TaskResponse`.
 
 ## Testes
-
-Para executar os testes:
 
 ```bash
 pytest tests/ -v
@@ -264,48 +250,49 @@ Ou:
 make test
 ```
 
-Os testes usam SQLite em memória, evitando alterações no banco local `tasks.db`.
+Os testes usam `SQLite` em memoria, sem alterar o arquivo local `tasks.db`.
 
-## Migrações
+## Migracoes
 
-Para aplicar migrações:
+Aplicar migracoes:
 
 ```bash
 alembic upgrade head
 ```
 
-Para criar uma nova migração automática após alterar modelos SQLAlchemy:
+Criar uma nova migracao depois de alterar modelos `SQLAlchemy`:
 
 ```bash
 alembic revision --autogenerate -m "descricao da alteracao"
 ```
 
-Ou pelo Makefile:
+Pelo Makefile:
 
 ```bash
 make revision message="descricao da alteracao"
 ```
 
-## Como Usar
+## Uso da Interface
 
 1. Abra `http://localhost:8000/`.
-2. Preencha título, descrição e data de conclusão.
+2. Preencha titulo, descricao e prazo final.
 3. Clique em `Adicionar tarefa`.
-4. Mova a tarefa entre colunas pelo botão ou por arrastar e soltar.
-5. Use os indicadores do topo para acompanhar urgência e progresso.
+4. Mova a tarefa entre colunas pelo botao ou por arrastar e soltar.
+5. Acompanhe urgencia e progresso nos indicadores do topo.
 
-## Segurança e Boas Práticas
+## Boas Praticas
 
-- Não versionar `.env`, bancos locais ou credenciais.
-- Usar variáveis de ambiente para configuração por ambiente.
-- Manter migrações versionadas com Alembic.
+- Nao versionar `.env`, bancos locais ou credenciais.
+- Usar variaveis de ambiente para configuracao.
+- Manter migracoes versionadas com `Alembic`.
 - Manter testes isolados do banco local.
-- Usar logs estruturados para facilitar análise de erros.
-- Usar respostas de erro consistentes para facilitar integração com frontend e clientes externos.
+- Usar logs estruturados para facilitar diagnostico.
+- Usar respostas de erro consistentes para integracao com frontend e clientes externos.
 
-## Observações
+## Observacoes
 
-- O campo `due_date` aceita data no formato `YYYY-MM-DD`.
-- Datas de prazo são tratadas como datas locais no frontend para evitar deslocamento por fuso horário.
-- Tarefas concluídas não recebem indicação ativa de urgência.
-- O frontend é servido por `app/main.py` e os arquivos estáticos ficam em `app/static`.
+- O campo `due_date` aceita valores no formato `YYYY-MM-DD`.
+- Prazos sao tratados como datas locais no frontend para evitar deslocamento por fuso horario.
+- Tarefas concluidas nao recebem indicador ativo de urgencia.
+- O frontend e servido por `app/main.py`.
+- Os arquivos estaticos ficam em `app/static`.
