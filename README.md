@@ -73,11 +73,11 @@ uvicorn app.main:app --reload
 
 5. Acesse a interface web:
 
-- `http://127.0.0.1:8000`
+- `http://localhost:8000/`
 
 6. Acesse a documentação automática (Swagger):
 
-- `http://127.0.0.1:8000/docs`
+- `http://localhost:8000/docs`
 
 ## Funcionalidades
 
@@ -152,7 +152,7 @@ Este projeto inclui testes de unidade e um teste de integração para verificar 
 
 ## Como usar
 
-1. Abra a interface web em `http://127.0.0.1:8000`
+1. Abra a interface web em `http://localhost:8000/`
 2. Preencha título, descrição e data de conclusão
 3. Arraste a tarefa para `Em andamento` ou `Concluídas`
 4. Use o painel no topo para identificar rapidamente o que está em dia, em atenção ou urgente
