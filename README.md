@@ -4,7 +4,7 @@
 
 Este projeto é um gerenciador de tarefas com backend em FastAPI e frontend estático que ajuda o usuário a acompanhar metas, prazos e progresso do trabalho. A aplicação suporta criação, atualização parcial, exclusão e listagem de tarefas, além de apresentar um painel visual com urgência de prazo e progresso de meta.
 
-## Storytelling: Como a IA Acelerou Este Projeto
+## Como a IA Acelerou Este Projeto
 
 Este projeto foi desenvolvido com a ajuda de ferramentas de IA como Copilot e Cursor, que permitiram:
 
