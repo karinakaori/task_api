@@ -9,15 +9,21 @@ Este projeto é um gerenciador de tarefas com backend em FastAPI e frontend est�
 Este projeto foi desenvolvido com a ajuda de ferramentas de IA como Copilot e Cursor, que permitiram:
 
 ✨ Geração rápida da estrutura base da API REST
+
 ✨ Automação de testes unitários com pytest
+
 ✨ Documentação automática com OpenAPI/Swagger
+
 ✨ Sugestões de boas práticas e refatoração
 
 ## Limitações identificadas e melhorias implementadas
 
 ⚠️ A IA gerou código sem considerar rate limiting
+
 ⚠️ Faltou validação de entrada em alguns endpoints
+
 ⚠️ Logs não foram estruturados adequadamente
+
 ⚠️ Segurança: credenciais devem ser mantidas fora do repositório e não commitadas
 
 As melhorias mais recentes incluem:
